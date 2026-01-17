@@ -6,7 +6,7 @@ export const dataProvider: DataProvider = {
         if (resource === 'subjects') {
             return {
                 data: MOCK_SUBJECTS as unknown as TData[],
-                total: 0,
+                total: MOCK_SUBJECTS.length,
             };
         }
 
