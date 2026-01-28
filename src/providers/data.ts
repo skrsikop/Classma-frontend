@@ -61,7 +61,7 @@ const options: CreateDataProviderOptions = {
     create: {
         getEndpoint: ({resource}) => resource,
         
-        buildBodyParams: async ({variables}) => variables;
+        buildBodyParams: async ({variables}) => variables,
 
         mapResponse: async (response) => {
             const json: CreateResponse = await response.json();
