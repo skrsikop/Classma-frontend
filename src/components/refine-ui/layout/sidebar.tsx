@@ -243,11 +243,15 @@ function SidebarHeader() {
           }
         )}
       >
-        <div>{title.icon}</div>
+      <div className="flex items-center gap-3 cursor-pointer ">
+        <img src="../assets/logo.png" alt="Classma Logo" className="h-10 w-auto" />
+      </div>
         <h2
           className={cn(
             "text-sm",
             "font-bold",
+            "text-2xl",
+            "cursor-pointer",
             "transition-opacity",
             "duration-200",
             {

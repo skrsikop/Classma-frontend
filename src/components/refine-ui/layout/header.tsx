@@ -4,22 +4,23 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import {
-  useActiveAuthProvider,
-  useLogout,
-  useRefineOptions,
-} from "@refinedev/core";
+import { useGetIdentity, useLogout, useRefineOptions } from "@refinedev/core";
 import { LogOutIcon } from "lucide-react";
+import type { User } from "@/types";
+// layout import removed to avoid circular references
 
 export const Header = () => {
   const { isMobile } = useSidebar();
 
   return <>{isMobile ? <MobileHeader /> : <DesktopHeader />}</>;
 };
+
+// Note: logo is rendered inside DesktopHeader and MobileHeader below.
 
 function DesktopHeader() {
   return (
@@ -36,12 +37,18 @@ function DesktopHeader() {
         "border-border",
         "bg-sidebar",
         "pr-3",
-        "justify-end",
+        "justify-between",
         "z-40"
       )}
     >
-      <ThemeToggle />
-      <UserDropdown />
+      <div className="flex items-center gap-3 pl-3">
+       
+      </div>
+
+      <div className="flex items-center gap-2">
+        <ThemeToggle />
+        <UserDropdown />
+      </div>
     </header>
   );
 }
@@ -51,7 +58,7 @@ function MobileHeader() {
 
   const { title } = useRefineOptions();
 
-  return (
+    return (
     <header
       className={cn(
         "sticky",
@@ -68,7 +75,7 @@ function MobileHeader() {
         "justify-between",
         "z-40"
       )}
-    >
+      >
       <SidebarTrigger
         className={cn("text-muted-foreground", "rotate-180", "ml-1", {
           "opacity-0": open,
@@ -77,6 +84,11 @@ function MobileHeader() {
           "pointer-events-none": open && !isMobile,
         })}
       />
+
+      <div className="flex items-center gap-3 pl-2">
+        <img src="/logo-light.png" alt="Classma Logo" className="h-8 w-auto" />
+      
+      </div>
 
       <div
         className={cn(
@@ -89,6 +101,7 @@ function MobileHeader() {
           "gap-2",
           "transition-discrete",
           "duration-200",
+          "max-sm:hidden",
           {
             "pl-3": !open,
             "pl-5": open,
@@ -102,6 +115,7 @@ function MobileHeader() {
             "font-bold",
             "transition-opacity",
             "duration-200",
+            "max-sm:hidden",
             {
               "opacity-0": !open,
               "opacity-100": open,
@@ -110,28 +124,43 @@ function MobileHeader() {
         >
           {title.text}
         </h2>
+
       </div>
 
-      <ThemeToggle className={cn("h-8", "w-8")} />
+      <div className="flex items-center gap-2">
+        <ThemeToggle />
+        <UserDropdown />
+      </div>
     </header>
   );
 }
 
 const UserDropdown = () => {
+  const { data: user } = useGetIdentity<User>();
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
-
-  const authProvider = useActiveAuthProvider();
-
-  if (!authProvider?.getIdentity) {
-    return null;
-  }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
         <UserAvatar />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="w-64">
+        <div className="px-3 py-2">
+          <p className="text-sm font-semibold">
+            {user?.name ?? "Signed in user"}
+          </p>
+          {user?.email && (
+            <p className="text-xs text-muted-foreground truncate">
+              {user.email}
+            </p>
+          )}
+          {user?.role && (
+            <span className="mt-2 inline-flex items-center rounded-sm bg-muted px-2 py-0.5 text-xs font-semibold uppercase text-muted-foreground">
+              {user.role}
+            </span>
+          )}
+        </div>
+        <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {
             logout();
