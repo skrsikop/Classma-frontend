@@ -1,4 +1,4 @@
-import { createAuthClient } from "better-auth/react";
+import { createAuthClient } from "better-auth";
 import { BACKEND_BASE_URL, USER_ROLES } from "../constants";
 
 export const authClient = createAuthClient({
